@@ -1,3 +1,3 @@
-# Linux commands and example collections
+# Linux commands and examples
 
 1. AWK (In progress)
