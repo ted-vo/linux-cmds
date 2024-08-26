@@ -198,7 +198,7 @@ line 3
 line 4
 ```
 
-<details>
+</details>
 
 ## Basic examples
 
