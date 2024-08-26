@@ -80,7 +80,7 @@ However, using gawk-specific features will mean that you'll be locked in to that
 
 ## Examples
 
-<detail>
+<details>
     <summary>Scans a file line by line</summary>
 
 ```bash
@@ -97,7 +97,7 @@ awk '{ print }' employee.txt
 # satvik director purchase 80000
 ```
 
-<detail>
+</details>
 
 ## Ref
 
