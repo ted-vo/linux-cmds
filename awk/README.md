@@ -245,7 +245,7 @@ Output:
  * 4 Ana Female
 ```
 
-<details>
+</details>
 
 <details>
     <summary>Printing Column or Field</summary>
@@ -279,7 +279,7 @@ Male   David
 Female Ana
 ```
 
-<details>
+</details>
 
 <details>
     <summary>Fileter by pattern</summary>
@@ -294,7 +294,7 @@ Output:
 4 Ana Female
 ```
 
-<details>
+</details>
 
 <details>
     <summary>Counting and Printing Matched Pattern</summary>
@@ -309,7 +309,7 @@ Output:
 1
 ```
 
-<details>
+</details>
 
 <details>
     <summary>Condition</summary>
@@ -324,7 +324,7 @@ Output:
 3 David Male
 ```
 
-<details>
+</details>
 
 <details>
     <summary>Pipline</summary>
@@ -339,7 +339,7 @@ Output:
 DAVID
 ```
 
-<details>
+</details>
 
 ## Advance examples
 
