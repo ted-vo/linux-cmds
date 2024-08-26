@@ -41,7 +41,7 @@ WHAT CAN WE DO WITH `AWK`?
 - Arithmetic and string operations.
 - Conditionals and loops.
 
-## AWK and GAWK?
+## AWK, NAWK and GAWK?
 
 ```plaintext
 AWK is a programming language. There are several implementations of AWK (mostly in the form of interpreters). AWK has been codified in POSIX. The main implementations in use today are:
@@ -78,30 +78,292 @@ As for speed, using gawk as "plain" awk should make no difference – often, whe
 However, using gawk-specific features will mean that you'll be locked in to that specific implementation – so if (hypothetically) you'd find a faster implementation, you'd probably have to adapt your script instead of just swapping out the binary. (There may be implementations that are faster, but I don't know of any as I've never had the need to make my awk scripts run faster.
 ```
 
-## Examples
+# Workflows
+
+        -----------------------------------------
+       | Execute AWK commands from `BEGIN` block |
+        -----------------------------------------
+                           |
+        -----------------------------------------
+    .--|       Read a line from input stream     |
+    |   -----------------------------------------
+    |                      |
+    |   -----------------------------------------
+    |  |       Execute AWK commands on line      |
+    |   -----------------------------------------
+    |                      |
+    |   -----------------------------------------
+    |  |       Repeat if it not END OF FILE      |
+    |   -----------------------------------------
+     ----------------------|
+        -----------------------------------------
+       | Execute AWK commands from `END` block   |
+        -----------------------------------------
+
+Read
+AWK reads a line from the input stream (file, pipe, or stdin) and stores it in memory.
+
+Execute
+All AWK commands are applied sequentially on the input. By default AWK execute commands on every line. We can restrict this by providing patterns.
+
+Repeat
+This process repeats until the file reaches its end.
+
+## Program Structure
+
+Let us now understand the program structure of AWK.
+
+BEGIN block (optional)
+The syntax of the BEGIN block is as follows −
+
+Syntax
+
+> BEGIN {awk-commands}
+
+- This is optional
+- The BEGIN block gets executed at program start-up and executes only once.
+- This is good place to initialize variables. BEGIN is an AWK keyword and hence it must be in upper-case.
+
+Body Block
+The syntax of the body block is as follows −
+
+Syntax
+
+> /pattern/ {awk-commands}
+
+- This is optional
+- AWK executes commands on every line.
+- We can restrict this by providing patterns
+
+END Block (optional)
+The syntax of the END block is as follows −
+
+Syntax
+
+> END {awk-commands}
+
+- This is optional
+- The END block executes at the end of the program and executes only once.
+- This is good place to clear sometime after process if needed. END is an AWK keyword and hence it must be in upper-case.
+
+## Basic Syntax
 
 <details>
-    <summary>Scans a file line by line</summary>
+    <summary>AWK command line</summary>
+
+> awk [options] file ...
 
 ```bash
-cd awk
-awk '{ print }' employee.txt
+echo > list.txt "line 1
+line 2
+line 3
+line 4"
+```
 
-# ajay manager account 45000
-# sunil clerk account 25000
-# varun manager sales 50000
-# amit manager account 47000
-# tarun peon sales 15000
-# deepak clerk sales 23000
-# sunil peon sales 13000
-# satvik director purchase 80000
+```bash
+awk '{print}' list.txt
+```
+
+Output
+
+```plaintext
+line 1
+line 2
+line 3
+line 4
 ```
 
 </details>
 
-## Ref
+<details>
+    <summary>AWK program file</summary>
 
-    - https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
-    - https://www.geeksforgeeks.org/gawk-command-in-linux-with-examples/
-    - https://unix.stackexchange.com/a/29583
-    - https://stackoverflow.com/a/29807182
+> awk [options] -f file ....
+
+```bash
+# create program file
+echo "{print}" > command.awk
+```
+
+```bash
+awk -f command.awk list.txt
+```
+
+Output
+
+```plaintext
+line 1
+line 2
+line 3
+line 4
+```
+
+<details>
+
+## Basic examples
+
+```bash
+echo > students.txt "1 James Male
+2 Neko Male
+3 David Male
+4 Ana Female"
+```
+
+<details>
+    <summary>Printing All Lines</summary>
+
+```bash
+# by default print all line
+awk '{ print }' students.txt
+```
+
+```bash
+# $0 aka all line
+awk '{ print $0 }' students.txt
+```
+
+Output:
+
+```plaintext
+1 James Male
+2 Neko Male
+3 David Male
+4 Ana Female
+```
+
+```bash
+# add some format
+awk '{ print " * " $0 }' students.txt
+```
+
+Output:
+
+```plaintext
+ * 1 James Male
+ * 2 Neko Male
+ * 3 David Male
+ * 4 Ana Female
+```
+
+<details>
+
+<details>
+    <summary>Printing Column or Field</summary>
+
+```bash
+# 2 Neko Male
+# $1  $2   $3
+awk '{ print $2 "\t" $3 }' students.txt
+```
+
+Output:
+
+```plaintext
+James   Male
+Neko    Male
+David   Male
+Ana     Female
+```
+
+```bash
+# any order
+awk '{ print $3 "\t" $2 }' students.txt
+```
+
+Output:
+
+```plaintext
+Male   James
+Male   Neko
+Male   David
+Female Ana
+```
+
+<details>
+
+<details>
+    <summary>Fileter by pattern</summary>
+
+```bash
+awk '/Female/ { print }' students.txt
+```
+
+Output:
+
+```plaintext
+4 Ana Female
+```
+
+<details>
+
+<details>
+    <summary>Counting and Printing Matched Pattern</summary>
+
+```bash
+awk '/Female/ { ++count } END { print count }' students.txt
+```
+
+Output:
+
+```plaintext
+1
+```
+
+<details>
+
+<details>
+    <summary>Condition</summary>
+
+```bash
+awk '/Male/ { if ($2 == "David" ) print }' students.txt
+```
+
+Output:
+
+```plaintext
+3 David Male
+```
+
+<details>
+
+<details>
+    <summary>Pipline</summary>
+
+```bash
+awk '/Male/ { if ($2 == "David" ) print $2 | "tr [a-z] [A-Z]" }' students.txt
+```
+
+Output:
+
+```plaintext
+DAVID
+```
+
+<details>
+
+## Advance examples
+
+- [Operators](https://www.tutorialspoint.com/awk/awk_operators.htm)
+- [Regular Expressions](https://www.tutorialspoint.com/awk/awk_regular_expressions.htm)
+- [Arrays](https://www.tutorialspoint.com/awk/awk_arrays.htm)
+- [Control flow](https://www.tutorialspoint.com/awk/awk_control_flow.htm)
+- [Loops](https://www.tutorialspoint.com/awk/awk_loops.htm)
+- [Built-in Function](https://www.tutorialspoint.com/awk/awk_built_in_functions.htm)
+- [Define Functions](https://www.tutorialspoint.com/awk/awk_user_defined_functions.htm)
+- [Pretty Printing](https://www.tutorialspoint.com/awk/awk_pretty_printing.htm)
+
+# References
+
+- https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
+- https://www.geeksforgeeks.org/gawk-command-in-linux-with-examples/
+- https://unix.stackexchange.com/a/29583
+- https://stackoverflow.com/a/29807182
+- https://www.tutorialspoint.com/awk
+
+# References
+
+- https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
+- https://www.geeksforgeeks.org/gawk-command-in-linux-with-examples/
+- https://unix.stackexchange.com/a/29583
+- https://stackoverflow.com/a/29807182
+- https://www.tutorialspoint.com/awk
